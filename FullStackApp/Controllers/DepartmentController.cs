@@ -89,6 +89,60 @@ namespace FullStackApp.Controllers
         }
 
 
+        // PUT api/values/5
+        [HttpPut]
+        public JsonResult Put(Department dep)
+        {
+            string query = "UPDATE Department SET DepartmentName = @DepartmentName WHERE DepartmentId = @DepartmentId;";
+
+            DataTable table = new DataTable();
+
+            string sqlDataSource = _configuration.GetConnectionString("EmployeeAppCon");
+            NpgsqlDataReader myReader;
+
+            using (NpgsqlConnection myCon = new NpgsqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("DepartmentId", dep.DepartmentId);
+                    myCommand.Parameters.AddWithValue("DepartmentName", dep.DepartmentName);
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                }
+                myCon.Close();
+            }
+            return new JsonResult(table);
+        }
+
+        // DELETE api/values/5
+        [HttpDelete]
+        public JsonResult Delete(int id)
+        {
+            string query = "DELETE from Department WHERE DepartmentId = @DepartmentId;";
+
+            DataTable table = new DataTable();
+
+            string sqlDataSource = _configuration.GetConnectionString("EmployeeAppCon");
+            NpgsqlDataReader myReader;
+
+            using (NpgsqlConnection myCon = new NpgsqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("DepartmentId", id);
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                }
+                myCon.Close();
+            }
+            return new JsonResult(table);
+        }
+
+
 
     }
 }
