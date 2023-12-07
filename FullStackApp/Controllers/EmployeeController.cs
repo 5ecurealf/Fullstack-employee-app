@@ -53,10 +53,9 @@ namespace FullStackApp.Controllers
         [HttpPost]
         public JsonResult Post([FromBody] Employee emp)
         {
-            string query = "INSERT INTO Employee (EmployeeName,Department,DateOfJoining,PhotoFileName) VALUES (@EmployeeName,@Department,@DataOfJoining,@PhotoFileName);";
+            string query = "INSERT INTO Employee (EmployeeName, Department, DateOfJoining, PhotoFileName) VALUES (@EmployeeName, @Department, @DateOfJoining, @PhotoFileName);";
 
             DataTable table = new DataTable();
-
             string sqlDataSource = _configuration.GetConnectionString("EmployeeAppCon");
 
             using (NpgsqlConnection myCon = new NpgsqlConnection(sqlDataSource))
@@ -64,23 +63,27 @@ namespace FullStackApp.Controllers
                 myCon.Open();
                 using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
                 {
-                    // Check if dep.DepartmentName is not null
                     myCommand.Parameters.AddWithValue("@EmployeeName", emp.EmployeeName);
                     myCommand.Parameters.AddWithValue("@Department", emp.Department);
-                    myCommand.Parameters.AddWithValue("@DataOfJoining", emp.DateOfJoining);
+
+                    // Parse the DateOfJoining string to a DateTime object
+                    DateTime dateOfJoining;
+                    if (DateTime.TryParse(emp.DateOfJoining, out dateOfJoining))
+                    {
+                        myCommand.Parameters.AddWithValue("@DateOfJoining", dateOfJoining);
+                    }
+                    else
+                    {
+                        // Handle the case where the date parsing fails
+                        return new JsonResult("Invalid DateOfJoining format");
+                    }
+
                     myCommand.Parameters.AddWithValue("@PhotoFileName", emp.PhotoFileName);
-                    
 
-                    // ExecuteReader is typically used for commands that return data (SELECT)
-                    // For INSERT, UPDATE, DELETE use ExecuteNonQuery, which returns the number of rows affected
                     int numberOfRowsInserted = myCommand.ExecuteNonQuery();
-
-                    // You can return the number of affected rows, or simply return an OK status, etc.
-                    // Since this is an INSERT command, there isn't a DataTable to load and return
                 }
                 myCon.Close();
             }
-            // Return the result as needed, e.g., a success message or the affected row count
             return new JsonResult("Insert successful");
         }
 
