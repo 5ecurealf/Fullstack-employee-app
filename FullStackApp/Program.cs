@@ -29,6 +29,9 @@ builder.Services.AddControllersWithViews()
 
         // Setting Contract Resolver
         options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
+
+        // Set the date format
+        options.SerializerSettings.DateFormatString = "yyyy-MM-dd";
     });
 
 
