@@ -51,41 +51,45 @@ namespace FullStackApp.Controllers
 
         // POST api/values
         [HttpPost]
-        public JsonResult Post(Department dep)
+        public JsonResult Post([FromBody] Department dep)
         {
             string query = "INSERT INTO Department (DepartmentName) VALUES (@DepartmentName);";
 
             DataTable table = new DataTable();
 
             string sqlDataSource = _configuration.GetConnectionString("EmployeeAppCon");
-            NpgsqlDataReader myReader;
 
             using (NpgsqlConnection myCon = new NpgsqlConnection(sqlDataSource))
             {
                 myCon.Open();
                 using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
                 {
-                    myCommand.Parameters.AddWithValue("DepartmentName", dep.DepartmentName);
-                    myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-                    myReader.Close();
+                    // Check if dep.DepartmentName is not null
+                    if (dep.DepartmentName == null)
+                    {
+                        // Handle the null case appropriately, e.g., skip the insert or insert with a DBNull value
+                        myCommand.Parameters.AddWithValue("@DepartmentName", DBNull.Value);
+                    }
+                    else
+                    {
+                        myCommand.Parameters.AddWithValue("@DepartmentName", dep.DepartmentName);
+                    }
+
+                    // ExecuteReader is typically used for commands that return data (SELECT)
+                    // For INSERT, UPDATE, DELETE use ExecuteNonQuery, which returns the number of rows affected
+                    int numberOfRowsInserted = myCommand.ExecuteNonQuery();
+
+                    // You can return the number of affected rows, or simply return an OK status, etc.
+                    // Since this is an INSERT command, there isn't a DataTable to load and return
                 }
                 myCon.Close();
             }
-            return new JsonResult(table);
+            // Return the result as needed, e.g., a success message or the affected row count
+            return new JsonResult("Insert successful");
         }
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
 
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+
     }
 }
 
