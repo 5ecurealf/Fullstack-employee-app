@@ -88,31 +88,52 @@ namespace FullStackApp.Controllers
         }
 
 
-        // PUT api/values/5
         [HttpPut]
         public ActionResult Put([FromBody] Employee emp)
         {
-            string query = "UPDATE Employee SET EmployeeName = @EmployeeName, Department= @Department, DateOfJoining = @DateOfJoining, PhotoFileName = @PhotoFileName WHERE EmployeeId = @EmployeeId;";
+            string query = "UPDATE Employee SET EmployeeName = @EmployeeName, Department = @Department, DateOfJoining = @DateOfJoining, PhotoFileName = @PhotoFileName WHERE EmployeeId = @EmployeeId;";
 
             string sqlDataSource = _configuration.GetConnectionString("EmployeeAppCon");
 
-            using (NpgsqlConnection myCon = new NpgsqlConnection(sqlDataSource))
+            try
             {
-                myCon.Open();
-                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
+                using (NpgsqlConnection myCon = new NpgsqlConnection(sqlDataSource))
                 {
-                    myCommand.Parameters.AddWithValue("@EmployeeId", emp.EmployeeId);
-                    myCommand.Parameters.AddWithValue("@EmployeeName", emp.EmployeeName);
-                    myCommand.Parameters.AddWithValue("@Department", emp.Department);
-                    myCommand.Parameters.AddWithValue("@DataOfJoining", emp.DateOfJoining);
-                    myCommand.Parameters.AddWithValue("@PhotoFileName", emp.PhotoFileName);
+                    myCon.Open();
+                    using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
+                    {
+                        myCommand.Parameters.AddWithValue("@EmployeeId", emp.EmployeeId);
+                        myCommand.Parameters.AddWithValue("@EmployeeName", emp.EmployeeName);
+                        myCommand.Parameters.AddWithValue("@Department", emp.Department);
 
-                    int numberOfRowsUpdated = myCommand.ExecuteNonQuery();
+                        DateTime dateOfJoining;
+                        if (DateTime.TryParse(emp.DateOfJoining, out dateOfJoining))
+                        {
+                            myCommand.Parameters.AddWithValue("@DateOfJoining", dateOfJoining);
+                        }
+                        else
+                        {
+                            return BadRequest("Invalid DateOfJoining format");
+                        }
+
+                        myCommand.Parameters.AddWithValue("@PhotoFileName", emp.PhotoFileName);
+
+                        int numberOfRowsUpdated = myCommand.ExecuteNonQuery();
+                        if (numberOfRowsUpdated == 0)
+                        {
+                            return NotFound("Employee not found");
+                        }
+                    }
                 }
-                myCon.Close();
+                return Ok("Successfully Updated Database");
             }
-            return Ok("Successfully Updated Database");
+            catch (Exception ex)
+            {
+                // Log exception details here
+                return StatusCode(500, "Internal server error");
+            }
         }
+
 
 
         // DELETE api/values/5
