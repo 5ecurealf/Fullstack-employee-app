@@ -143,20 +143,32 @@ namespace FullStackApp.Controllers
             string query = "DELETE FROM Employee WHERE EmployeeId = @EmployeeId;";
 
             string sqlDataSource = _configuration.GetConnectionString("EmployeeAppCon");
-            int numberOfRowsDeleted;
 
-            using (NpgsqlConnection myCon = new NpgsqlConnection(sqlDataSource))
+            try
             {
-                myCon.Open();
-                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
+                using (NpgsqlConnection myCon = new NpgsqlConnection(sqlDataSource))
                 {
-                    myCommand.Parameters.AddWithValue("@EmployeeId", id);
-                    numberOfRowsDeleted = myCommand.ExecuteNonQuery();
+                    myCon.Open();
+                    using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
+                    {
+                        myCommand.Parameters.AddWithValue("@EmployeeId", id);
+                        int numberOfRowsDeleted = myCommand.ExecuteNonQuery();
+
+                        if (numberOfRowsDeleted == 0)
+                        {
+                            return NotFound("Employee not found");
+                        }
+                    }
                 }
-                myCon.Close();
+                return Ok("Successfully Deleted from Database");
             }
-            return Ok("Successfully Deleted from Database");
+            catch (Exception ex)
+            {
+                // Log exception details here
+                return StatusCode(500, "Internal server error");
+            }
         }
+
 
     }
 }
