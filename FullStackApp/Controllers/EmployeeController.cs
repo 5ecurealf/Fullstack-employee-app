@@ -17,10 +17,12 @@ namespace FullStackApp.Controllers
     {
 
         private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _env;
 
-        public EmployeeController(IConfiguration configuration)
+        public EmployeeController(IConfiguration configuration, IWebHostEnvironment env)
         {
             _configuration = configuration;
+            _env = env; 
         }
 
         // GET: api/values
@@ -166,6 +168,30 @@ namespace FullStackApp.Controllers
             {
                 // Log exception details here
                 return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [Route("SaveFile")]
+        [HttpPost]
+        public JsonResult SaveFile()
+        {
+            try
+            {
+                var httpRequest = Request.Form;
+                var postedFile = httpRequest.Files[0];
+                string fileName = postedFile.FileName;
+                var physicalPath = _env.ContentRootPath + "/Photos/" + fileName;
+
+                using(var stream = new FileStream(physicalPath, FileMode.Create))
+                {
+                    postedFile.CopyTo(stream);
+                }
+
+                return new JsonResult(fileName);
+            }
+            catch (Exception)
+            {
+                return new JsonResult("anonymous.png");
             }
         }
 
