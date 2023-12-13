@@ -25,6 +25,7 @@ export class Department extends Component {
   }
 
   render() {
+    const { departments } = this.state;
     return (
       <div className="container">
         <table className="table table-striped">
@@ -38,8 +39,8 @@ export class Department extends Component {
           <tbody>
             {departments.map((dep) => (
               <tr key={dep.DepartmentId}>
-                <td>{dep.DepartmentId}</td>
-                <td>{dep.DepartmentName}</td>
+                <td>{dep.departmentid}</td>
+                <td>{dep.departmentname}</td>
                 <td>
                   <button type="button" className="btn btn-light mr-1">
                     <svg
