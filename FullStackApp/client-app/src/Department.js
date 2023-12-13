@@ -10,6 +10,20 @@ export class Department extends Component {
       departments: [],
     };
   }
+
+  refreshList() {
+    fetch(variables.API_URL + "department")
+      .then((response) => response.json())
+      .then((data) => {
+        this.setState({ departments: data });
+      });
+  }
+
+  // call the refresh method once the component is mounted
+  componentDidMount() {
+    this.refreshList();
+  }
+
   render() {
     return (
       <div className="container">
