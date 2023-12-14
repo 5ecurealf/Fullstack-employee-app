@@ -8,7 +8,30 @@ export class Department extends Component {
     // populating state varaiable with data from API
     this.state = {
       departments: [],
+      modalTitle: "",
+      DepartmentName: "",
+      DepartmentId: 0,
     };
+  }
+
+  changeDepartmentName = (e) => {
+    this.setState({ DepartmentName: e.target.value });
+  };
+
+  addClick() {
+    this.setState({
+      modalTitle: "Add Department",
+      DepartmentId: 0,
+      DepartmentName: "",
+    });
+  }
+
+  editClick(dep) {
+    this.setState({
+      modalTitle: "Edit Department",
+      DepartmentId: dep.departmentid,
+      DepartmentName: dep.departmentname,
+    });
   }
 
   refreshList() {
@@ -25,9 +48,19 @@ export class Department extends Component {
   }
 
   render() {
-    const { departments } = this.state;
+    const { departments, modalTitle, DepartmentName, DepartmentId } =
+      this.state;
     return (
       <div className="container">
+        <button
+          type="button"
+          className="btn btn-primary m-2 float-end"
+          data-bs-toggle="modal"
+          data-bs-target="#exampleModal"
+          onClick={() => this.addClick()}
+        >
+          Add Department
+        </button>
         <table className="table table-striped">
           <thead>
             <tr>
@@ -42,7 +75,13 @@ export class Department extends Component {
                 <td>{dep.departmentid}</td>
                 <td>{dep.departmentname}</td>
                 <td>
-                  <button type="button" className="btn btn-light mr-1">
+                  <button
+                    type="button"
+                    className="btn btn-light mr-1"
+                    data-bs-toggle="modal"
+                    data-bs-target="#exampleModal"
+                    onClick={() => this.editClick(dep)}
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"
@@ -75,6 +114,45 @@ export class Department extends Component {
             ))}
           </tbody>
         </table>
+
+        <div
+          className="modal fade"
+          id="exampleModal"
+          tabIndex="-1"
+          aria-hidden="true"
+        >
+          <div className="modal-header">
+            <h5 className="modal-title">{modalTitle}</h5>
+            <button
+              type="button"
+              className="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+
+          <div className="modal-body">
+            <div className="input-group mb-3">
+              <span className="input-group-text">Department Name</span>
+              <input
+                type="text"
+                className=" form-control"
+                value={DepartmentName}
+                onChange={this.changeDepartmentName}
+              ></input>
+            </div>
+            {DepartmentId == 0 ? (
+              <button type="button" className="btn btn-primary float-start">
+                Create
+              </button>
+            ) : null}
+            {DepartmentId != 0 ? (
+              <button type="button" className="btn btn-primary float-start">
+                Update
+              </button>
+            ) : null}
+          </div>
+        </div>
       </div>
     );
   }
