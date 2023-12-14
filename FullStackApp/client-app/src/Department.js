@@ -34,6 +34,29 @@ export class Department extends Component {
     });
   }
 
+  createClick() {
+    fetch(variables.API_URL + "department", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        DepartmentName: this.state.DepartmentName,
+      }),
+    })
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          alert(result);
+          this.refreshList();
+        },
+        (error) => {
+          alert("failed");
+        }
+      );
+  }
+
   refreshList() {
     fetch(variables.API_URL + "department")
       .then((response) => response.json())
