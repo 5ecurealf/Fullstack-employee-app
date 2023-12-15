@@ -146,16 +146,15 @@ export class Employee extends Component {
   // create a new form and attach the first file chosen
   // once uploaded replace the photofilename state variable
   imageUpload = (e) => {
-    e.preventDefault();
-
     const formData = new FormData();
-    formData.append("file", e.target.files[0], e.target.files[0].name);
+    const file = e.target.files[0];
+    formData.append("file", file, file.name);
 
     fetch(variables.API_URL + "employee/savefile", {
       method: "POST",
       body: formData,
     })
-      .then((res) => res.json)
+      .then((res) => res.json())
       .then((data) => {
         this.setState({ PhotoFileName: data });
       });
