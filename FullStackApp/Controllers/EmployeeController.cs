@@ -25,7 +25,7 @@ namespace FullStackApp.Controllers
             _env = env; 
         }
 
-        // GET: api/values
+        // GET: api/employee
         [HttpGet]
         public JsonResult Get()
         {
@@ -51,7 +51,7 @@ namespace FullStackApp.Controllers
             return new JsonResult(table);
         }
 
-        // POST api/values
+        // POST api/employee
         [HttpPost]
         public JsonResult Post([FromBody] Employee emp)
         {
@@ -89,7 +89,7 @@ namespace FullStackApp.Controllers
             return new JsonResult("Insert successful");
         }
 
-
+        // PUT api/employee
         [HttpPut]
         public ActionResult Put([FromBody] Employee emp)
         {
@@ -138,7 +138,7 @@ namespace FullStackApp.Controllers
 
 
 
-        // DELETE api/values/5
+        // DELETE api/employee/5
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {
@@ -171,6 +171,7 @@ namespace FullStackApp.Controllers
             }
         }
 
+        // POST /api/employee/SaveFile
         [Route("SaveFile")]
         [HttpPost]
         public JsonResult SaveFile()
