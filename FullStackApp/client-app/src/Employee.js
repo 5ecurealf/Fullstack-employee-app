@@ -266,6 +266,7 @@ export class Employee extends Component {
                         onChange={this.changeDepartment}
                         value={Department}
                       >
+                        <option>Please select a department</option>
                         {departments.map((dep) => (
                           <option key={dep.departmentid}>
                             {dep.departmentname}
