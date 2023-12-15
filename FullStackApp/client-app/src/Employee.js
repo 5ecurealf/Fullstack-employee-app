@@ -143,6 +143,24 @@ export class Employee extends Component {
     this.refreshList();
   }
 
+  // create a new form and attach the first file chosen
+  // once uploaded replace the photofilename state variable
+  imageUpload = (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("file", e.target.files[0], e.target.files[0].name);
+
+    fetch(variables.API_URL + "employee/savefile", {
+      method: "POST",
+      body: formData,
+    })
+      .then((res) => res.json)
+      .then((data) => {
+        this.setState({ PhotoFileName: data });
+      });
+  };
+
   render() {
     const {
       departments,
@@ -290,7 +308,12 @@ export class Employee extends Component {
                       width="250px"
                       height="250px"
                       src={PhotoPath + PhotoFileName}
-                    ></img>
+                    />
+                    <input
+                      className="m-2"
+                      type="file"
+                      onChange={this.imageUpload}
+                    ></input>
                   </div>
                 </div>
                 {/* Modal Buttons */}
