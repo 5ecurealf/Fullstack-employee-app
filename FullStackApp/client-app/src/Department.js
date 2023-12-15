@@ -79,6 +79,25 @@ export class Department extends Component {
         }
       );
   }
+  deleteClick(id) {
+    fetch(variables.API_URL + "department/" + id, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          alert(result);
+          this.refreshList();
+        },
+        (error) => {
+          alert("failed");
+        }
+      );
+  }
 
   refreshList() {
     fetch(variables.API_URL + "department")
@@ -143,7 +162,14 @@ export class Department extends Component {
                       />
                     </svg>
                   </button>
-                  <button type="button" className="btn btn-light mr-1">
+                  <button
+                    type="button"
+                    className="btn btn-light mr-1"
+                    onClick={() => {
+                      this.deleteClick(dep.DepartmentId);
+                      console.log(dep.DepartmentId);
+                    }}
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"

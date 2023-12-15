@@ -116,6 +116,8 @@ namespace FullStackApp.Controllers
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {
+            Console.WriteLine($"Attempting to delete department with ID: {id}");
+
             string query = "DELETE FROM Department WHERE DepartmentId = @DepartmentId;";
 
             string sqlDataSource = _configuration.GetConnectionString("EmployeeAppCon");
