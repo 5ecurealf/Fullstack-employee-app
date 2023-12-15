@@ -165,10 +165,7 @@ export class Department extends Component {
                   <button
                     type="button"
                     className="btn btn-light mr-1"
-                    onClick={() => {
-                      this.deleteClick(dep.DepartmentId);
-                      console.log(dep.DepartmentId);
-                    }}
+                    onClick={() => this.deleteClick(dep.departmentid)}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
