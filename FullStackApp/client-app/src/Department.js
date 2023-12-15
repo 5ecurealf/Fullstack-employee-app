@@ -11,8 +11,46 @@ export class Department extends Component {
       modalTitle: "",
       DepartmentName: "",
       DepartmentId: 0,
+
+      // Filter state variables
+      DepartmentIdFilter: " ",
+      DepartmentNameFilter: "",
+      departmentsWithoutFilter: [],
     };
   }
+
+  FilterFn() {
+    var DepartmentIdFilter = this.state.DepartmentIdFilter;
+    var DepartmentNameFilter = this.state.DepartmentNameFilter;
+    console.log(this.state.departmentsWithoutFilter);
+    var filteredData = this.state.departmentsWithoutFilter.filter(function (
+      e1
+    ) {
+      return (
+        e1.departmentid
+          .toString()
+          .toLowerCase()
+          .includes(DepartmentIdFilter.toString().trim().toLowerCase()) &&
+        e1.departmentname
+          .toString()
+          .toLowerCase()
+          .includes(DepartmentNameFilter.toString().trim().toLowerCase())
+      );
+    });
+
+    console.log(filteredData);
+
+    this.setState({ departments: filteredData });
+  }
+
+  changeDepartmentIdFilter = (e) => {
+    this.state.DepartmentIdFilter = e.target.value;
+    this.FilterFn();
+  };
+  changeDepartmentNameFilter = (e) => {
+    this.state.DepartmentNameFilter = e.target.value;
+    this.FilterFn();
+  };
 
   changeDepartmentName = (e) => {
     this.setState({ DepartmentName: e.target.value });
@@ -105,7 +143,7 @@ export class Department extends Component {
     fetch(variables.API_URL + "department")
       .then((response) => response.json())
       .then((data) => {
-        this.setState({ departments: data });
+        this.setState({ departments: data, departmentsWithoutFilter: data });
       });
   }
 
@@ -131,14 +169,28 @@ export class Department extends Component {
         <table className="table table-striped">
           <thead>
             <tr>
-              <th>DepartmentId</th>
-              <th>DepartmentName</th>
+              <th>
+                <input
+                  className="form-control m-2"
+                  onChange={this.changeDepartmentIdFilter}
+                  placeholder="Filter"
+                ></input>
+                DepartmentId
+              </th>
+              <th>
+                <input
+                  className="form-control m-2"
+                  onChange={this.changeDepartmentNameFilter}
+                  placeholder="Filter"
+                ></input>
+                DepartmentName
+              </th>
               <th>Options</th>
             </tr>
           </thead>
           <tbody>
             {departments.map((dep) => (
-              <tr key={dep.DepartmentId}>
+              <tr key={dep.departmentid}>
                 <td>{dep.departmentid}</td>
                 <td>{dep.departmentname}</td>
                 <td>
